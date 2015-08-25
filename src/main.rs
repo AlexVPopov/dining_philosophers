@@ -16,7 +16,7 @@ impl Philosopher {
 
         thread::sleep_ms(1000);
 
-        println!("{} is done eating.",  self.name);
+        println!("{} is done eating.", self.name);
     }
 }
 
@@ -29,7 +29,13 @@ fn main() {
         Philosopher::new("Michel Foucault"),
     ];
 
-    for p in &philosophers {
-        p.eat();
+    let handles: Vec<_> = philosophers.into_iter().map(|p| {
+        thread::spawn(move || {
+            p.eat();
+        })
+    }).collect();
+
+    for h in handles {
+        h.join().unwrap();
     }
 }
